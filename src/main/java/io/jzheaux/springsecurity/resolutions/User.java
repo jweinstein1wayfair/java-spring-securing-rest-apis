@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -37,15 +34,15 @@ public class User implements Serializable {
   }
 
   static class BridgeUser extends User implements UserDetails {
-    public BridgeUser(User user) {
+    private Collection<GrantedAuthority> authorities;
+
+    public BridgeUser(User user, Collection<GrantedAuthority> authorities) {
       super(user);
+      this.authorities = authorities;
     }
 
-    public List<GrantedAuthority> getAuthorities() {
-      return this.userAuthorities.stream()
-              .map(x -> x.authority)
-              .map(SimpleGrantedAuthority::new)
-              .collect(Collectors.toList());
+    public Collection<GrantedAuthority> getAuthorities() {
+      return this.authorities;
     }
 
     @Override
