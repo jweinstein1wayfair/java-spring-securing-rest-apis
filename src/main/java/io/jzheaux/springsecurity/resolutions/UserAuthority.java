@@ -27,4 +27,7 @@ public class UserAuthority {
   @ManyToOne
   User user;
 
+  public String getAuthority() {
+    return authority;
+  }
 }
