@@ -32,6 +32,8 @@ public class User implements Serializable {
     this.enabled = user.enabled;
     this.fullName = user.fullName;
     this.userAuthorities = user.userAuthorities;
+    this.subscription = user.subscription;
+    this.friends = new ArrayList<>(user.friends);
   }
 
   static class BridgeUser extends User implements UserDetails {
@@ -92,6 +94,12 @@ public class User implements Serializable {
   @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
   Collection<UserAuthority> userAuthorities = new ArrayList<>();
 
+  @Column
+  String subscription;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  Collection<User> friends = new ArrayList<>();
+
   public Collection<UserAuthority> getUserAuthorities() {
     return Collections.unmodifiableCollection(this.userAuthorities);
   }
@@ -107,5 +115,25 @@ public class User implements Serializable {
 
   public void setFullName(String fullName) {
     this.fullName = fullName;
+  }
+
+  public String getSubscription() {
+    return subscription;
+  }
+
+  public void setSubscription(String subscription) {
+    this.subscription = subscription;
+  }
+
+  public Collection<User> getFriends() {
+    return friends;
+  }
+
+  public void addFriend(User friend) {
+    friends.add(friend);
+  }
+
+  public String getUsername() {
+    return username;
   }
 }
