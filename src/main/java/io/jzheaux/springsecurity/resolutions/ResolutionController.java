@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ResolutionController {
 	private final ResolutionRepository resolutions;
-	private final UserRepository users;
+	private final UserService users;
 
-	public ResolutionController(ResolutionRepository resolutions, UserRepository users) {
+	public ResolutionController(ResolutionRepository resolutions, UserService users) {
 		this.resolutions = resolutions;
 		this.users = users;
 	}
@@ -36,7 +36,7 @@ public class ResolutionController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		final Iterable<Resolution> all = resolutions.findAll();
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("user:read"))) {
-			all.forEach(r -> r.setText(r.getText() + ", by " + users.findByUsername(r.getOwner()).map(User::getFullName).orElse("Anonymous")));
+			all.forEach(r -> r.setText(r.getText() + ", by " + users.getFullName(r.getOwner()).orElse("Anonymous")));
 		}
 		return all;
 	}
